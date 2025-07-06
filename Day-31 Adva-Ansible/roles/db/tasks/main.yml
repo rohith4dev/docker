@@ -1,0 +1,19 @@
+---
+# tasks file for roles/db
+- name: Install PostgresSQL
+  apt: 
+    name: postgresql
+    state: present  
+    update_cache: yes
+
+- name: Ensure PostgresSQL is Running
+  service:
+    name: postgresql
+    state: started
+    enabled: true
+
+- name: Create a new PostgreSQL user
+  become: true
+  shell:
+    cmd: sudo -u postgres psql -tc \"SELECT 1 FROM pg_database WHERE datname = 'myapp' " | grep -q 1 ||
+         sudo -u postgres psql -c "CREATE DATABASE myapp;"
